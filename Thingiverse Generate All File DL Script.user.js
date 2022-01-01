@@ -9,6 +9,7 @@
 // @require      https://code.jquery.com/ui/1.13.0/jquery-ui.js
 // @resource     jqueryUiCss https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css
 // @match        https://www.thingiverse.com/thing:*/files
+// @match        https://thingiverse.com/thing:*/files
 // @icon         https://www.google.com/s2/favicons?domain=thingiverse.com
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
