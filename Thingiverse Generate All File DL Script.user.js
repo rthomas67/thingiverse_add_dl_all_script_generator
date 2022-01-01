@@ -37,7 +37,7 @@ function generateDownloadScript() {
     }
     var scriptText = "#!/bin/sh\n";
     var filenameHeader = document.querySelector("div[class^='ThingFilesListHeader__fileName']");
-    var subdirectoryName = filenameHeader.innerHTML.replace(' ', '_').toLowerCase();
+    var subdirectoryName = filenameHeader.innerHTML.replace(/ /g, '_').toLowerCase();
     scriptText += ("mkdir " + subdirectoryName + "\n");
     // Get all the download links
     var downloadLinks = document.querySelectorAll("a[class^='ThingFile__download']");
