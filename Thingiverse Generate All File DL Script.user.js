@@ -8,6 +8,7 @@
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @require      https://code.jquery.com/ui/1.13.0/jquery-ui.js
 // @resource     jqueryUiCss https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css
+// @resource     jqueryUiIcons https://code.jquery.com/ui/1.13.0/themes/images
 // @match        https://*.thingiverse.com/thing:*/files
 // @icon         https://www.google.com/s2/favicons?domain=thingiverse.com
 // @grant        GM_addStyle
@@ -15,8 +16,37 @@
 // ==/UserScript==
 
 GM_addStyle(GM_getResourceText ("jqueryUiCss"));
-// TODO: Add jquery-ui image/icon/sprite reference to fix close button icon
-//    See: https://exceptionshub.com/jqueryui-modal-dialog-does-not-show-close-button-x.html
+
+/*
+ * This section of the script re-maps the relative url references in the jquery-ui css resource,
+ * so that the images are loaded via absolute (full) url, to fix the close button icon in the dialog.
+ * ALERT: If this makes the script malfunction in a particular browser, just remove the entire
+ * for/loop block.  It is only for UI polishing anyway.
+ * See: https://exceptionshub.com/jqueryui-modal-dialog-does-not-show-close-button-x.html
+ */
+var absoluteImagesUrlPrefix = "https://code.jquery.com/ui/1.13.0/themes/base/images/";
+for (const styleSheet of document.styleSheets) {
+    // console.log("StyleSheet.baseURL: " + styleSheet.baseURL);
+    try {
+        var cssRules = styleSheet.cssRules; // throws error if it can't be accessed because of CORS
+        for (const cssRule of cssRules) {
+            var selectorText = cssRule.selectorText;
+            if (selectorText.indexOf(".ui-icon") >= 0) {
+                var cssText = cssRule.style.cssText;
+                if (cssText.indexOf("url(\"images/ui-icons") >= 0) {
+                    var originalBackgroundImageUrl = cssRule.styleMap.get("background-image");
+                    var modifiedBackgroundImageUrl = originalBackgroundImageUrl
+                        .toString().replace("images/", absoluteImagesUrlPrefix);
+                    console.log("Remapping relative image ref url in css: '" + originalBackgroundImageUrl
+                                + "' - to: '" + modifiedBackgroundImageUrl + "'");
+                    cssRule.styleMap.set("background-image", modifiedBackgroundImageUrl);
+                }
+            }
+        }
+    } catch (e) {
+        // who cares.  These style sheets aren't the ones that need mods anyway
+    }
+}
 
 var generateAlreadyCalled = false;
 const dialogStyle = "{ autoOpen: false, show: { effect: \"blind\", duration: 500 }, hide: { effect: \"explode\", duration: 500 } }";
