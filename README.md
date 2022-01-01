@@ -5,8 +5,11 @@ to the list of individual files that must be downloaded one at a time.  That SUC
 
 # Userscripts
 One of the options for "fixing" stuff on broken web sites is to use a browser plugin
-like GreaseMonkey or TamperMonkey to enable "user scripts."  That's what I did to make
+like Greasemonkey or Tampermonkey to enable "user scripts."  That's what I did to make
 the broken "Download All Files" feature on Thingiverse a little less painful.
+
+* My favorite browser plugin for userscripts is Tampermonkey: https://www.tampermonkey.net
+  * Note: Tampermonkey might support older browser versions than some other plugins.
 
 # Approach
 The quickest way I could think of to streamline the process of downloading all the files
@@ -36,3 +39,7 @@ This still isn't ideal.  I had hoped to be able to figure out how to create the 
 the browser, but gave up on that for now.  It still might be possible, so I'll keep tinkering with it
 and would welcome any ideas about how to get that working.  For now, this at least takes a little of
 the hassle out of downloading things that have a bunch of individual files.
+
+# Known Issues
+* Thingiverse page needs to be reloaded, after switching to the /files view, to make the button show up.
+* The relative reference to jquery-ui icons gets messed up by the userscript context, so the "X" in the dialog close button is missing.

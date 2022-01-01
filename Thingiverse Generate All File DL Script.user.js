@@ -8,19 +8,18 @@
 // @require      https://gist.github.com/raw/2625891/waitForKeyElements.js
 // @require      https://code.jquery.com/ui/1.13.0/jquery-ui.js
 // @resource     jqueryUiCss https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css
-// @match        https://www.thingiverse.com/thing:*/files
-// @match        https://thingiverse.com/thing:*/files
+// @match        https://*.thingiverse.com/thing:*/files
 // @icon         https://www.google.com/s2/favicons?domain=thingiverse.com
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
 // ==/UserScript==
 
 GM_addStyle(GM_getResourceText ("jqueryUiCss"));
+// TODO: Add jquery-ui image/icon/sprite reference to fix close button icon
+//    See: https://exceptionshub.com/jqueryui-modal-dialog-does-not-show-close-button-x.html
 
 var generateAlreadyCalled = false;
 const dialogStyle = "{ autoOpen: false, show: { effect: \"blind\", duration: 500 }, hide: { effect: \"explode\", duration: 500 } }";
-
-
 
 (function() {
     'use strict';
@@ -30,11 +29,8 @@ const dialogStyle = "{ autoOpen: false, show: { effect: \"blind\", duration: 500
 
 function generateDownloadScript() {
     'use strict';
-    if (generateAlreadyCalled) {
-        return;
-    } else {
-        generateAlreadyCalled = true;
-    }
+    if (generateAlreadyCalled) return;
+    generateAlreadyCalled = true;
     var scriptText = "#!/bin/sh\n";
     var filenameHeader = document.querySelector("div[class^='ThingFilesListHeader__fileName']");
     var subdirectoryName = filenameHeader.innerHTML.replace(/ /g, '_').toLowerCase();
@@ -53,8 +49,6 @@ function generateDownloadScript() {
     // add script command to create readme file with link back to the Thingiverse item page.
     scriptText += ("echo -e '# About\\nDownloaded from: " + ogUrl + "\\n' > " + subdirectoryName + "/download_readme.md\n");
     scriptText += ("zip -rm thingiverse_" + thingiverseItemId + "_" + subdirectoryName + ".zip " + subdirectoryName);
-
-    // console.log("LINK COUNT: " + linkCount);
 
     addDownloadButtonToHeaderDivTag(scriptText);
 }
@@ -77,17 +71,10 @@ function addDownloadButtonToHeaderDivTag(scriptText) {
     $( "#scriptpopup" ).dialog({
         title: "D/L All Script",
         autoOpen: false,
-        width: 700,
-        height: 600,
+        width: 700, height: 600,
         modal: true,
-        show: {
-            effect: "blind",
-            duration: 1000
-        },
-        hide: {
-            effect: "explode",
-            duration: 1000
-        }
+        show: { effect: "blind", duration: 1000 },
+        hide: { effect: "explode", duration: 1000 }
     });
 
     $( "#scriptPopupButton" ).on( "click", function() {
@@ -101,11 +88,7 @@ function addDownloadButtonToHeaderDivTag(scriptText) {
         navigator.clipboard.writeText(scriptTextArea.value)
             .then(res => {
                 console.log("Script text copied to clipboard.");
-//                alert("Script text copied to clipboard.");
-//                return false;
             })
         return false;
     });
 }
-
-
