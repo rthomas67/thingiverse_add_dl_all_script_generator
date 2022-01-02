@@ -1,7 +1,16 @@
 # Summary
 Yet another feature of Thingiverse seems to be broken.  The **"Download All Files"** button 
-used to link to a zip file bundle of the entire "thing" but at the moment it just autoscrolls/autonavigates
-to the list of individual files that must be downloaded one at a time.  That SUCKS!!!
+used to link to a zip file bundle of the entire "thing" but at the moment, clicking
+"Download All Files" just autoscrolls/autonavigates to the list of individual files,
+and it would appear that MakerBot/Thingiverse expects those to be downloaded one at a time.
+
+**That REALLY SUCKS, especially for "things" with a lot of files!!!**
+
+* Note: For some "things" there is actually a generated zip file available for D/L.  For 
+those "things," the userscript (described below) also adds a link on the files tab/view
+page to make it more convenient to try that, before trying to generate and run a shell
+script.  It probably won't work for newer "things," but seems to work for most older
+"things."
 
 # Userscripts
 One of the options for "fixing" stuff on broken web sites is to use a browser plugin
