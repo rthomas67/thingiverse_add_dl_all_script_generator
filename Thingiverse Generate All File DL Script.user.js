@@ -9,7 +9,7 @@
 // @require      https://code.jquery.com/ui/1.13.0/jquery-ui.js
 // @resource     jqueryUiCss https://code.jquery.com/ui/1.13.0/themes/base/jquery-ui.css
 // @resource     jqueryUiIcons https://code.jquery.com/ui/1.13.0/themes/images
-// @match        https://*.thingiverse.com/thing:*/files
+// @match        https://*.thingiverse.com/thing:*
 // @icon         https://www.google.com/s2/favicons?domain=thingiverse.com
 // @grant        GM_addStyle
 // @grant        GM_getResourceText
@@ -37,8 +37,8 @@ for (const styleSheet of document.styleSheets) {
                     var originalBackgroundImageUrl = cssRule.styleMap.get("background-image");
                     var modifiedBackgroundImageUrl = originalBackgroundImageUrl
                         .toString().replace("images/", absoluteImagesUrlPrefix);
-                    console.log("Remapping relative image ref url in css: '" + originalBackgroundImageUrl
-                                + "' - to: '" + modifiedBackgroundImageUrl + "'");
+                    // console.log("DEBUG: Remapping relative image ref url in css: '" + originalBackgroundImageUrl
+                    //            + "' - to: '" + modifiedBackgroundImageUrl + "'");
                     cssRule.styleMap.set("background-image", modifiedBackgroundImageUrl);
                 }
             }
@@ -48,19 +48,33 @@ for (const styleSheet of document.styleSheets) {
     }
 }
 
-var generateAlreadyCalled = false;
-const dialogStyle = "{ autoOpen: false, show: { effect: \"blind\", duration: 500 }, hide: { effect: \"explode\", duration: 500 } }";
-
 (function() {
     'use strict';
-    waitForKeyElements ("a[class^='ThingFile__download']", generateDownloadScript);
+    waitForKeyElements ("div[class^='ThingPage__tabContent']", setupWatcherForTabChange);
     console.log("Thingiverse Download Script Generator Complete.");
 })();
 
+/*
+ * Attach a handler function to the tab content div that re-makes the script/button
+ * each time there is a switch over to the "files" tab/view.  Otherwise it is awkward
+ * to detect when to run generateDownloadScript().  This even works on the initial
+ * page load if the files tab/view happens to be selected already via url path.
+ */
+function setupWatcherForTabChange() {
+    // Watch for a switch to the files view/tab in the content area of a "thing" page
+    $( "div[class^='ThingPage__tabContent']" ).bind('DOMSubtreeModified', function(e) {
+        // console.log("TYP: " + e.target);
+        var thingFilesContainerDiv = e.target.querySelector("div[class^='ThingFilesContainer__thingFilesContainer']");
+        // console.log("CONT: " + thingFilesContainerDiv);
+        if (thingFilesContainerDiv != null) {
+            console.log("Detected change to files tabContent - creating script and popup button...");
+            generateDownloadScript();
+        }
+    });
+}
+
 function generateDownloadScript() {
     'use strict';
-    if (generateAlreadyCalled) return;
-    generateAlreadyCalled = true;
     var scriptText = "#!/bin/sh\n";
     var filenameHeader = document.querySelector("div[class^='ThingFilesListHeader__fileName']");
     var subdirectoryName = filenameHeader.innerHTML.replace(/ /g, '_').toLowerCase();
@@ -122,3 +136,4 @@ function addDownloadButtonToHeaderDivTag(scriptText) {
         return false;
     });
 }
+

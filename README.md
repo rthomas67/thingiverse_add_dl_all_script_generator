@@ -42,9 +42,15 @@ the hassle out of downloading things that have a bunch of individual files.
 
 # Known Issues
 * Thingiverse page needs to be reloaded, after switching to the /files view, to make the 
-"D/L All Script" button show up.  TODO: Find a way to watch for a switch to the /files view.
+"D/L All Script" button show up.
+  * FIXED: Changed previous method of waiting for the files list to show up to make the button
+  in the main script, to binding a handler function to the content container div that remakes
+  the button whenever there is a switch to the /files view.
+    * Note: This also requires matching/running the userscript on the thing page even if the 
+    /files url suffix is missing.
 * The jquery-ui icons references in the css are relative to the source of the css resource, but that gets
-messed up because the css is loaded in the userscript context.  There is a section of the script that
-uses some experimental (limited browser support) features to modify the stylesheet to make the "X" in 
-the jquery-ui dialog close button show up.  If this breaks the script in a browser that doesn't support
-those features, it can be removed.  Tested only in Google Chrome on Windows - v 96.0.4664.110.
+messed up because the css is loaded in the userscript context.  
+  * FIXED: There is a section of the script that uses some experimental (limited browser support) 
+  features to modify the stylesheet to make the "X" in the jquery-ui dialog close button show up.
+    * ALERT: If this breaks the script in a browser that doesn't support
+    those features, it can be removed.  Tested only in Google Chrome on Windows - v 96.0.4664.110.
