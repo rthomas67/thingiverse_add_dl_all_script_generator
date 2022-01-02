@@ -86,20 +86,31 @@ function generateDownloadScript() {
         scriptText += ("curl -Lv '" + downloadLink.getAttribute("href") + "' --output '" + subdirectoryName + "/" + downloadLink.getAttribute("download") + "'\n");
         linkCount++;
     });
-    var ogUrlTag = document.querySelector("meta[property='og:url']");
-    var ogUrl = ogUrlTag.getAttribute("content");
+    var ogUrl = getOgUrl();
     var thingiverseItemId = ogUrl.substring(ogUrl.lastIndexOf(":")+1);
     console.log("ITEMID: " + thingiverseItemId);
     // add script command to create readme file with link back to the Thingiverse item page.
     scriptText += ("echo -e '# About\\nDownloaded from: " + ogUrl + "\\n' > " + subdirectoryName + "/download_readme.md\n");
     scriptText += ("zip -rm thingiverse_" + thingiverseItemId + "_" + subdirectoryName + ".zip " + subdirectoryName);
 
+    addAttemptZipDownloadLinkToHeaderDivTag();
     addDownloadButtonToHeaderDivTag(scriptText);
 }
 
+function getOgUrl() {
+    var ogUrlTag = document.querySelector("meta[property='og:url']");
+    var ogUrl = ogUrlTag.getAttribute("content");
+    return ogUrl;
+}
+
+function getFilesListHeaderElement() {
+    return document.querySelectorAll('div[class^="ThingFilesListHeader__header"]')[0];
+}
+
 function addDownloadButtonToHeaderDivTag(scriptText) {
-    var headerElement = document.querySelectorAll('div[class^="ThingFilesListHeader__header"]')[0];
+    var headerElement = getFilesListHeaderElement();
     var scriptPopupLinkDiv = document.createElement("div");
+    scriptPopupLinkDiv.style = "float: right;";
     var scriptPopupButton = document.createElement("button");
     scriptPopupButton.setAttribute("id", "scriptPopupButton");
     scriptPopupButton.innerHTML = "D/L-All Script";
@@ -135,5 +146,22 @@ function addDownloadButtonToHeaderDivTag(scriptText) {
             })
         return false;
     });
+}
+
+/*
+ * Some older "things" still have a zip file that can be downloaded, so it's worth
+ * a shot to just try grabbing that instead of messing with the script.  This
+ * adds a link for that too.
+ */
+function addAttemptZipDownloadLinkToHeaderDivTag() {
+    var zipDownloadLinkDiv = document.createElement('div');
+    zipDownloadLinkDiv.style = "text-align: center; font-size: 11px; padding-right: 8px; line-height: 0.9;";
+    var zipDownloadLink = document.createElement("a");
+    zipDownloadLink.setAttribute("id", "attemptZipDownload");
+    zipDownloadLink.setAttribute("href", getOgUrl() + "/zip");
+    zipDownloadLink.innerHTML = "Attempt D/L of<br>Existing .zip";
+    var headerElement = getFilesListHeaderElement();
+    zipDownloadLinkDiv.appendChild(zipDownloadLink);
+    headerElement.appendChild(zipDownloadLinkDiv);
 }
 
